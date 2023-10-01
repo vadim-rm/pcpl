@@ -30,6 +30,7 @@ func (s *InputService) getCoefficients(input domain.Input) (output domain.Coeffi
 	}
 
 	if output.A == 0 {
+		err = domain.ErrWrongInput
 		return
 	}
 
@@ -46,10 +47,19 @@ func (s *InputService) getCoefficients(input domain.Input) (output domain.Coeffi
 	return
 }
 
+func getMethodBasedErr(isConsole bool) error {
+	if (isConsole) {
+		return domain.ErrWrongConsoleInput
+	} else {
+		return domain.ErrWrongInput
+	}
+}
+
 func (s *InputService) Get() (domain.Coefficients, error) {
 	var input domain.Input
+	isConsole := len(os.Args) > 3
 
-	if len(os.Args) > 3 {
+	if isConsole {
 		input.A = os.Args[1]
 		input.B = os.Args[2]
 		input.C = os.Args[3]
@@ -57,13 +67,13 @@ func (s *InputService) Get() (domain.Coefficients, error) {
 		fmt.Print("Введите коэффициенты через пробел: ")
 		_, err := fmt.Scanf("%s %s %s", &input.A, &input.B, &input.C)
 		if err != nil {
-			return domain.Coefficients{}, err
+			return domain.Coefficients{}, getMethodBasedErr(isConsole)
 		}
 	}
 
 	coefficients, err := s.getCoefficients(input)
 	if err != nil {
-		return domain.Coefficients{}, err
+		return domain.Coefficients{}, getMethodBasedErr(isConsole)
 	}
 	return coefficients, nil
 }
