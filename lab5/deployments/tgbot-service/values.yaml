@@ -1,0 +1,11 @@
+replicaCount: 1
+
+image:
+  repository: registry.gitlab.com/trackerbot/pcpl_lab5
+  pullPolicy: IfNotPresent
+  pullSecretName: trackerbot-cred
+
+  tag: "latest"
+
+service:
+  secret_name: tgbot-secret
